@@ -9,6 +9,15 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Sample data store
+const users = [
+  { id: 1, name: 'John Doe', email: 'john@example.com' },
+  { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
+  { id: 3, name: 'Bob Johnson', email: 'bob@example.com' }
+];
+
+let nextUserId = 4;
+
 // Swagger configuration
 const swaggerOptions = {
   definition: {
@@ -19,13 +28,13 @@ const swaggerOptions = {
       description: 'A simple Express API with Swagger documentation',
       contact: {
         name: 'API Support'
-      },
-      servers: [
-        {
-          url: `http://localhost:${PORT}`
-        }
-      ]
-    }
+      }
+    },
+    servers: [
+      {
+        url: `http://localhost:${PORT}`
+      }
+    ]
   },
   apis: ['./server.js'] // Path to the API docs
 };
@@ -84,11 +93,6 @@ app.get('/', (req, res) => {
  *                     example: john@example.com
  */
 app.get('/api/users', (req, res) => {
-  const users = [
-    { id: 1, name: 'John Doe', email: 'john@example.com' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com' }
-  ];
   res.json(users);
 });
 
@@ -128,12 +132,6 @@ app.get('/api/users', (req, res) => {
  *         description: User not found
  */
 app.get('/api/users/:id', (req, res) => {
-  const users = [
-    { id: 1, name: 'John Doe', email: 'john@example.com' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com' }
-  ];
-  
   const user = users.find(u => u.id === parseInt(req.params.id));
   
   if (user) {
@@ -195,11 +193,12 @@ app.post('/api/users', (req, res) => {
   }
   
   const newUser = {
-    id: Math.floor(Math.random() * 1000) + 4,
+    id: nextUserId++,
     name,
     email
   };
   
+  users.push(newUser);
   res.status(201).json(newUser);
 });
 
